@@ -1,440 +1,236 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Hopf Fibration - Linking Number Visualizer</title>
-    <style>
-        body { margin: 0; padding: 0; background-color: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        
-        #container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ripetizioni Matematica e Fisica</title>
+  <!-- IL CSS È QUI DENTRO, NON SERVE FILE ESTERNO -->
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Top View: R3 */
-        #view-s3 {
-            flex: 1; 
-            position: relative;
-            border-bottom: 2px solid #333;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-        }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #312e81;
+      color: white;
+      line-height: 1.6;
+    }
 
-        /* Bottom View: S2 */
-        #view-s2 {
-            height: 40vh; 
-            position: relative;
-            background-color: #080808;
-        }
+    /* HERO */
+    .hero {
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+    }
 
-        /* UI Overlays */
-        .overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            pointer-events: none;
-            border-left: 3px solid #00d2ff;
-        }
-        
-        h2 { margin: 0 0 5px 0; font-size: 1.1rem; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px;}
-        p { margin: 0; font-size: 0.9rem; color: #ccc; line-height: 1.4; }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      padding: 20px;
+    }
 
-        /* Legend for fibers */
-        .legend-item { display: flex; align-items: center; margin-top: 5px; font-size: 0.85rem;}
-        .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; display: inline-block;}
-        .dot-1 { background-color: #ff0055; box-shadow: 0 0 5px #ff0055;}
-        .dot-2 { background-color: #ccff00; box-shadow: 0 0 5px #ccff00;}
+    .logo {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 30px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #312e81;
+    }
 
-        /* Controls */
-        #controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 8px;
-            width: 250px;
-            z-index: 10;
-            border: 1px solid #333;
-        }
+    .hero-title {
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
 
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: bold;}
-        input[type=range] { width: 100%; cursor: pointer; accent-color: #00d2ff; }
+    .slogan {
+      font-size: 1.8rem;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
 
-        .hint {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-top: 10px;
-            font-style: italic;
-            border-top: 1px solid #444;
-            padding-top: 5px;
-        }
-    </style>
-    
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
+    /* SEZIONI */
+    section {
+      padding: 60px 20px;
+    }
+
+    section:nth-child(even) {
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    section:nth-child(odd):not(.hero) {
+      background: #ffffff;
+      color: #1e293b;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 50px;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    section:nth-child(even) h2,
+    section:nth-child(odd):not(.hero) h2 {
+      color: #312e81;
+    }
+
+    /* GRIGLIA */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* CARD */
+    .card {
+      background: white;
+      color: #312e81;
+      padding: 35px 25px;
+      border-radius: 16px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e2e8f0;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* CONTATTI */
+    .contatti {
+      text-align: center;
+      font-size: 1.2rem;
+      background: #312e81 !important;
+      color: white !important;
+    }
+
+    .contatti h2 {
+      color: white !important;
+    }
+
+    .contatti p {
+      margin: 15px 0;
+      font-size: 1.3rem;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .hero {
+        min-height: 500px;
+        height: auto;
+        padding-top: 80px;
+        padding-bottom: 80px;
+      }
+
+      .logo {
+        width: 110px;
+        height: 110px;
+        margin-bottom: 25px;
+      }
+
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .slogan {
+        font-size: 1.5rem;
+      }
+
+      section {
+        padding: 50px 15px;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 40px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .card {
+        padding: 30px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+      
+      .slogan {
+        font-size: 1.3rem;
+      }
+      
+      .contatti p {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div id="container">
-    <div id="view-s3">
-        <div class="overlay">
-            <h2>Spazio Totale (R³)</h2>
-            <p>Le fibre formano tori. Due fibre distinte hanno<br><b>Linking Number = 1</b>.</p>
-            <div class="legend-item"><span class="dot dot-1"></span>Fibra 1 (Click 1)</div>
-            <div class="legend-item"><span class="dot dot-2"></span>Fibra 2 (Click 2)</div>
-        </div>
-        <div id="controls">
-            <label for="etaSlider">Latitudine Toro (Base)</label>
-            <input type="range" id="etaSlider" min="0.1" max="3.04" step="0.01" value="1.57">
-            <div class="hint">
-                1. Scegli il Toro con lo slider.<br>
-                2. Clicca <b>due punti</b> sulla sfera in basso.<br>
-                3. Osserva come si allacciano.
-            </div>
-        </div>
-    </div>
+<header class="hero">
+  <div class="hero-content">
+    <!-- Logo placeholder -->
+    <div class="logo">📚</div>
+    <h1 class="hero-title">Ripetizioni di Matematica e Fisica</h1>
+    <h2 class="slogan">Dal problema alla soluzione</h2>
+  </div>
+</header>
 
-    <div id="view-s2">
-        <div class="overlay">
-            <h2>Base (S²)</h2>
-            <p>Clicca per generare fibre.<br>(Max 2 fibre attive)</p>
-        </div>
-    </div>
-</div>
+<section class="servizi">
+  <h2>I miei servizi</h2>
+  <div class="grid">
+    <div class="card">Ripetizioni individuali</div>
+    <div class="card">Preparazione verifiche</div>
+    <div class="card">Recupero debiti</div>
+    <div class="card">Online e in presenza</div>
+  </div>
+</section>
 
-<script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+<section class="recensioni">
+  <h2>Cosa dicono gli studenti</h2>
+  <div class="grid">
+    <div class="card">"Ho recuperato matematica in 2 mesi" – Marco</div>
+    <div class="card">"Spiegazioni chiarissime" – Giulia</div>
+    <div class="card">"Finalmente ho capito fisica" – Luca</div>
+  </div>
+</section>
 
-    // --- Configuration ---
-    const COLORS = {
-        background: 0x050505,
-        sphereWireframe: 0x444444,
-        torus: 0x0077aa, // Slightly darker blue to let fibers pop
-        fiber1: 0xff0055, // Hot Pink
-        fiber2: 0xccff00, // Lime Green
-        highlightPoint: 0xffffff
-    };
+<section class="contatti">
+  <h2>Contatti</h2>
+  <p>Email: esempio@email.it</p>
+  <p>WhatsApp: 123456789</p>
+</section>
 
-    // --- Global State ---
-    const state = {
-        eta: Math.PI / 2, 
-        // We store up to 2 selected points (Vector3 on S2)
-        selectedPoints: [] 
-    };
-
-    // --- Helpers ---
-    function createScene(containerId) {
-        const container = document.getElementById(containerId);
-        const scene = new THREE.Scene();
-        // Slightly different backgrounds to distinguish views
-        scene.background = new THREE.Color(containerId === 'view-s3' ? 0x111111 : 0x080808);
-
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-        
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(renderer.domElement);
-
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(5, 10, 7);
-        scene.add(dirLight);
-
-        window.addEventListener('resize', () => {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        });
-
-        return { scene, camera, renderer, controls, container };
-    }
-
-    // ==========================================
-    // MATH: Hopf Fibration 
-    // ==========================================
-
-    function getFiberPoints(pS2, segments = 250) {
-        const points = [];
-        const r = Math.sqrt(pS2.x**2 + pS2.y**2 + pS2.z**2); 
-        let xi = Math.acos(Math.max(-1, Math.min(1, pS2.z / r))); 
-        let phi = Math.atan2(pS2.y, pS2.x);
-
-        // Precompute trig for efficiency
-        const cosXi2 = Math.cos(xi / 2);
-        const sinXi2 = Math.sin(xi / 2);
-
-        for (let i = 0; i <= segments; i++) {
-            const psi = (i / segments) * 2 * Math.PI;
-            const ang1 = psi + phi / 2;
-            const ang2 = psi - phi / 2;
-
-            // Hopf Inverse -> R4
-            const x0 = cosXi2 * Math.cos(ang1);
-            const x1 = cosXi2 * Math.sin(ang1);
-            const x2 = sinXi2 * Math.cos(ang2);
-            const x3 = sinXi2 * Math.sin(ang2);
-
-            // Stereographic -> R3
-            const denom = 1 - x3;
-            if (Math.abs(denom) < 0.05) {
-                // Closer to infinity, add a "break" or push a far point
-                // To keep it clean, we just skip pushing to avoid lines across screen
-                continue; 
-            }
-
-            const X = x0 / denom;
-            const Y = x1 / denom;
-            const Z = x2 / denom;
-            
-            // Limit coordinate size to prevent rendering artifacts at infinity
-            if (Math.abs(X) > 20 || Math.abs(Y) > 20 || Math.abs(Z) > 20) continue;
-
-            points.push(new THREE.Vector3(X, Y, Z));
-        }
-        return points;
-    }
-
-    // Generate Torus (background context)
-    function createTorusPoints(eta, numFibers = 36, pointsPerFiber = 60) {
-        const allPoints = [];
-        const xi = eta; 
-        const cosXi2 = Math.cos(xi / 2);
-        const sinXi2 = Math.sin(xi / 2);
-
-        for (let f = 0; f < numFibers; f++) {
-            const phi = (f / numFibers) * 2 * Math.PI;
-            const fiberPoints = [];
-            for (let i = 0; i <= pointsPerFiber; i++) {
-                const psi = (i / pointsPerFiber) * 2 * Math.PI;
-                const ang1 = psi + phi / 2;
-                const ang2 = psi - phi / 2;
-                const x0 = cosXi2 * Math.cos(ang1);
-                const x1 = cosXi2 * Math.sin(ang1);
-                const x2 = sinXi2 * Math.cos(ang2);
-                const x3 = sinXi2 * Math.sin(ang2);
-                const denom = 1 - x3;
-                if (Math.abs(denom) > 0.05) {
-                    fiberPoints.push(x0 / denom, x1 / denom, x2 / denom);
-                }
-            }
-            allPoints.push(fiberPoints);
-        }
-        return allPoints;
-    }
-
-    // ==========================================
-    // VIEW 1: S3 (Top)
-    // ==========================================
-    const s3Ctx = createScene('view-s3');
-    s3Ctx.camera.position.set(3, 2.5, 3);
-
-    // Torus Container
-    const torusGroup = new THREE.Group();
-    s3Ctx.scene.add(torusGroup);
-
-    // Dynamic Fibers (We use 2 explicitly)
-    const fiberMat1 = new THREE.LineBasicMaterial({ color: COLORS.fiber1, linewidth: 4 });
-    const fiberMat2 = new THREE.LineBasicMaterial({ color: COLORS.fiber2, linewidth: 4 });
-    
-    const fiberGeo1 = new THREE.BufferGeometry();
-    const fiberGeo2 = new THREE.BufferGeometry();
-    
-    const fiberLine1 = new THREE.Line(fiberGeo1, fiberMat1);
-    const fiberLine2 = new THREE.Line(fiberGeo2, fiberMat2);
-    
-    // Add them to a group so we can rotate the whole assembly if needed
-    const fibersGroup = new THREE.Group();
-    fibersGroup.add(fiberLine1);
-    fibersGroup.add(fiberLine2);
-    s3Ctx.scene.add(fibersGroup);
-
-    // Default hidden
-    fiberLine1.visible = false;
-    fiberLine2.visible = false;
-
-    function updateTorusRender(eta) {
-        // Clear old torus
-        while(torusGroup.children.length > 0){ 
-            const obj = torusGroup.children[0];
-            obj.geometry.dispose(); 
-            torusGroup.remove(obj); 
-        }
-
-        const fibersData = createTorusPoints(eta);
-        const material = new THREE.LineBasicMaterial({ 
-            color: COLORS.torus, 
-            transparent: true, 
-            opacity: 0.15 // Very faint to let selected fibers pop
-        });
-
-        fibersData.forEach(pointsArray => {
-            const geometry = new THREE.BufferGeometry();
-            const vertices = new Float32Array(pointsArray);
-            geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-            const line = new THREE.Line(geometry, material);
-            torusGroup.add(line);
-        });
-    }
-
-    function updateSelectedFibers() {
-        // Fiber 1
-        if (state.selectedPoints.length > 0) {
-            const pts1 = getFiberPoints(state.selectedPoints[0]);
-            fiberLine1.geometry.setFromPoints(pts1);
-            fiberLine1.visible = true;
-        } else {
-            fiberLine1.visible = false;
-        }
-
-        // Fiber 2
-        if (state.selectedPoints.length > 1) {
-            const pts2 = getFiberPoints(state.selectedPoints[1]);
-            fiberLine2.geometry.setFromPoints(pts2);
-            fiberLine2.visible = true;
-        } else {
-            fiberLine2.visible = false;
-        }
-    }
-
-    // ==========================================
-    // VIEW 2: S2 (Bottom)
-    // ==========================================
-    const s2Ctx = createScene('view-s2');
-    s2Ctx.camera.position.set(0, 0, 2.5);
-
-    // Base Sphere
-    const s2Geo = new THREE.SphereGeometry(1, 32, 32);
-    const s2Mat = new THREE.MeshBasicMaterial({ 
-        color: COLORS.sphereWireframe, 
-        wireframe: true,
-        transparent: true, opacity: 0.2
-    });
-    const hitSphere = new THREE.Mesh(s2Geo, new THREE.MeshBasicMaterial({ visible: false })); // Invisible hit target
-    s2Ctx.scene.add(new THREE.Mesh(s2Geo, s2Mat));
-    s2Ctx.scene.add(hitSphere);
-
-    // Markers for selected points
-    const mGeo = new THREE.SphereGeometry(0.06, 16, 16);
-    const marker1 = new THREE.Mesh(mGeo, new THREE.MeshBasicMaterial({ color: COLORS.fiber1 }));
-    const marker2 = new THREE.Mesh(mGeo, new THREE.MeshBasicMaterial({ color: COLORS.fiber2 }));
-    s2Ctx.scene.add(marker1);
-    s2Ctx.scene.add(marker2);
-    marker1.visible = false;
-    marker2.visible = false;
-
-    // Latitude Ring (Torus indicator on S2)
-    const ringGeo = new THREE.TorusGeometry(1.01, 0.015, 8, 64);
-    const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.torus });
-    const latitudeRing = new THREE.Mesh(ringGeo, ringMat);
-    s2Ctx.scene.add(latitudeRing);
-
-    function updateS2Visuals() {
-        // Update Marker 1
-        if (state.selectedPoints.length > 0) {
-            marker1.position.copy(state.selectedPoints[0]);
-            marker1.visible = true;
-        } else {
-            marker1.visible = false;
-        }
-
-        // Update Marker 2
-        if (state.selectedPoints.length > 1) {
-            marker2.position.copy(state.selectedPoints[1]);
-            marker2.visible = true;
-        } else {
-            marker2.visible = false;
-        }
-
-        // Update Ring Position based on slider eta
-        const z = Math.cos(state.eta);
-        const r = Math.sin(state.eta);
-        latitudeRing.scale.set(r, r, 1);
-        latitudeRing.position.set(0, 0, z);
-        latitudeRing.rotation.x = 0; // Flat on Z planes
-    }
-
-    // ==========================================
-    // INPUT HANDLING
-    // ==========================================
-    
-    // Slider
-    document.getElementById('etaSlider').addEventListener('input', (e) => {
-        state.eta = parseFloat(e.target.value);
-        updateTorusRender(state.eta);
-        updateS2Visuals();
-    });
-
-    // Raycasting (Click)
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    s2Ctx.container.addEventListener('click', (event) => {
-        const rect = s2Ctx.renderer.domElement.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, s2Ctx.camera);
-        const intersects = raycaster.intersectObject(hitSphere);
-
-        if (intersects.length > 0) {
-            const p = intersects[0].point;
-            
-            // LOGIC: FIFO Queue of size 2
-            if (state.selectedPoints.length >= 2) {
-                state.selectedPoints.shift(); // Remove oldest
-            }
-            state.selectedPoints.push(p);
-
-            // Update all views
-            updateSelectedFibers();
-            updateS2Visuals();
-        }
-    });
-
-    // ==========================================
-    // LOOP
-    // ==========================================
-    
-    // Initial Render
-    updateTorusRender(state.eta);
-    updateS2Visuals();
-
-    function animate() {
-        requestAnimationFrame(animate);
-
-        // Gentle rotation for 3D effect
-        torusGroup.rotation.y += 0.003;
-        // Important: Rotate the fibers exactly the same amount as the torus group
-        // so they stay visually "glued" to the manifold structure
-        fibersGroup.rotation.y = torusGroup.rotation.y;
-
-        s3Ctx.controls.update();
-        s3Ctx.renderer.render(s3Ctx.scene, s3Ctx.camera);
-
-        s2Ctx.controls.update();
-        s2Ctx.renderer.render(s2Ctx.scene, s2Ctx.camera);
-    }
-    animate();
-
-</script>
 </body>
 </html>
